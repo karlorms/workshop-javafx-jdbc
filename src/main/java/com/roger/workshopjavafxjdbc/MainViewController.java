@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import model.services.DepartmentService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,7 +37,7 @@ public class MainViewController implements Initializable {
 
     @FXML
     public void onMenuItemDepartmentAction() {
-        loadView("DepartmentList.fxml");
+        loadView("DepartmentListView.fxml");
     }
 
     @FXML
@@ -63,6 +64,10 @@ public class MainViewController implements Initializable {
             mainVBox.getChildren().add(mainMenu);
             mainVBox.getChildren().addAll(newVBox.getChildren());
 
+
+            DepartmentListController departmentListController = loader.getController();
+            departmentListController.setDepartmentService(new DepartmentService());
+            departmentListController.updateTableView();
         } catch (IOException e) {
             Alerts.showAlert("IO Exception",
                     "Error loading view",
@@ -80,6 +85,7 @@ public class MainViewController implements Initializable {
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.setTitle("Workshop");
             stage.getScene().getWindow();
             stage.alwaysOnTopProperty();
             stage.show();

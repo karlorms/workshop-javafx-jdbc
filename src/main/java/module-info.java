@@ -5,4 +5,5 @@ module com.roger.workshopjavafxjdbc {
 
     opens com.roger.workshopjavafxjdbc to javafx.fxml;
     exports com.roger.workshopjavafxjdbc;
+    exports model.entities;
 }
