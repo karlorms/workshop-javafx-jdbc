@@ -1,22 +1,31 @@
 package com.roger.workshopjavafxjdbc;
 
+import com.roger.workshopjavafxjdbc.util.Alerts;
+import com.roger.workshopjavafxjdbc.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class DepartmentListController implements Initializable {
+public class DepartmentListViewController implements Initializable {
 
     private DepartmentService departmentService;
 
@@ -39,8 +48,9 @@ public class DepartmentListController implements Initializable {
     }
 
     @FXML
-    public void onBtNewAction(){
-        System.out.println("onBtNewAction");
+    public void onBtNewAction(ActionEvent actionEvent){
+        Stage parentEstage = Utils.currentStage(actionEvent);
+        loadDialogForm("DepartmentForm.fxml", parentEstage);
     }
 
     @Override
@@ -63,5 +73,23 @@ public class DepartmentListController implements Initializable {
         List<Department> list = departmentService.findAll();
         departmentObservableList = FXCollections.observableArrayList(list);
         departmentTableView.setItems(departmentObservableList);
+    }
+
+    private void loadDialogForm(String view, Stage parentStage) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(view));
+        try {
+            Pane pane = loader.load();
+
+            Scene scene = new Scene(pane);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.initOwner(parentStage);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setResizable(false);
+            stage.setTitle("Cadastro");
+            stage.show();
+        } catch (IOException e) {
+            Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 }

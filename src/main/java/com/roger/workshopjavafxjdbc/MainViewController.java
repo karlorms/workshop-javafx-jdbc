@@ -38,7 +38,7 @@ public class MainViewController implements Initializable {
 
     @FXML
     public void onMenuItemDepartmentAction() {
-        loadView("DepartmentListView.fxml", (DepartmentListController controller) -> {
+        loadView("DepartmentListView.fxml", (DepartmentListViewController controller) -> {
             controller.setDepartmentService(new DepartmentService());
             controller.updateTableView();
         });
@@ -46,7 +46,7 @@ public class MainViewController implements Initializable {
 
     @FXML
     public void onMenuItemAboutAction() {
-        loadViewPopUp("AboutView.fxml");
+        loadDialogAbout("AboutView.fxml");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MainViewController implements Initializable {
         }
     }
 
-    private void loadViewPopUp(String view) {
+    private void loadDialogAbout(String view) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(view));
         try {
             VBox vBox = loader.load();
