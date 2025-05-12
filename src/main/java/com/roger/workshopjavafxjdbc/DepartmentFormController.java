@@ -1,5 +1,6 @@
 package com.roger.workshopjavafxjdbc;
 
+import com.roger.workshopjavafxjdbc.listeners.DataChangeListener;
 import com.roger.workshopjavafxjdbc.util.Alerts;
 import com.roger.workshopjavafxjdbc.util.Constraints;
 import com.roger.workshopjavafxjdbc.util.Utils;
@@ -15,9 +16,15 @@ import model.entities.Department;
 import model.services.DepartmentService;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class DepartmentFormController implements Initializable {
+
+    private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+
+    private Department department;
 
     private DepartmentService departmentService;
 
@@ -36,27 +43,36 @@ public class DepartmentFormController implements Initializable {
     @FXML
     private Button btnCancel;
 
+    public void setDepartment(Department department){
+        this.department = department;
+    }
+
+    public void subscribeDataChangeListener(DataChangeListener listener) {
+        dataChangeListeners.add(listener);
+    }
+
     @FXML
-    public void onSaveAction() {
+    public void onSaveAction(ActionEvent actionEvent) {
         try {
-            Department department = new Department(Utils.tryToParseToInt(lblId.getText()),
+            department = new Department(Utils.tryToParseToInt(lblId.getText()),
                     txtName.getText());
             departmentService = new DepartmentService();
-            int id = departmentService.insertDepartment(department);
-            lblId.setText(String.valueOf(id));
+            lblId.setText(String.valueOf(departmentService.insertDepartment(department)));
+            notifyDataChangeListeners();
         } catch (DbException e){
             Alerts.showAlert("Error", null, e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void notifyDataChangeListeners() {
+        for (DataChangeListener listener : dataChangeListeners){
+            listener.onDataChanged();
         }
     }
 
     @FXML
     public void onCancelAction(ActionEvent actionEvent) {
         Utils.currentStage(actionEvent).close();
-        MainViewController main = new MainViewController();
-        main.loadView("DepartmentListView.fxml", (DepartmentListViewController controller) -> {
-            controller.setDepartmentService(new DepartmentService());
-            controller.updateTableView();
-        });
     }
 
     @Override
