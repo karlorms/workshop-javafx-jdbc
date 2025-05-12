@@ -1,5 +1,6 @@
 package com.roger.workshopjavafxjdbc.util;
 
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 public class Constraints {

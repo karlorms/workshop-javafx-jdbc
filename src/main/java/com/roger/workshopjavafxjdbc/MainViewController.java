@@ -90,7 +90,7 @@ public class MainViewController implements Initializable {
             stage.setTitle("Workshop");
             stage.getScene().getWindow();
             stage.alwaysOnTopProperty();
-            stage.show();
+            stage.showAndWait();
             //stage.setAlwaysOnTop(true);
         } catch (IOException e) {
             Alerts.showAlert("IO Exception",

@@ -80,14 +80,13 @@ public class DepartmentListViewController implements Initializable {
         try {
             Pane pane = loader.load();
 
-            Scene scene = new Scene(pane);
             Stage stage = new Stage();
-            stage.setScene(scene);
+            stage.setScene(new Scene(pane));
             stage.initOwner(parentStage);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setResizable(false);
             stage.setTitle("Cadastro");
-            stage.show();
+            stage.showAndWait();
         } catch (IOException e) {
             Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
         }

@@ -19,7 +19,7 @@ public class HelloApplication extends Application {
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scene = new Scene(scrollPane);
-        stage.setMaximized(true);
+        //stage.setMaximized(true);
         stage.setTitle("Workshop");
         stage.setScene(scene);
         stage.show();
