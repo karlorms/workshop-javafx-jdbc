@@ -1,6 +1,5 @@
 package model.dao.impl;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import db.DB;
 import db.DbException;
 import db.DbIntegrityException;
@@ -20,7 +19,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
     }
 
     @Override
-    public void insert(Department department) {
+    public int insert(Department department) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -34,6 +33,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             if(rows > 0){
                 while (rs.next()){
                     System.out.println("Rows affected: " + rows + " Id gerenated: " + rs.getInt(1));
+                    return rs.getInt(1);
                 }
             } else {
                 System.out.println("No rows affected!");
@@ -51,6 +51,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             DB.closePreparedStatement(ps);
             DB.closeResultset(rs);
         }
+        return 0;
     }
 
     @Override
@@ -118,6 +119,35 @@ public class DepartmentDaoJDBC implements DepartmentDao {
                     + "ON seller.DepartmentId = department.Id "
                     + "WHERE DepartmentId = " + id + " "
                     + "ORDER BY Name");
+
+            if (rs.next()) {
+                return dep = new Department(rs.getInt("DepartmentId"),
+                        rs.getString("DepName"));
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException e1) {
+                throw new DbIntegrityException("Cant roll back! Caused by: " + e1.getMessage());
+            }
+            System.out.println("Rolled back! Caused by: " + e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+            DB.closeResultset(rs);
+        }
+        return null;
+    }
+
+    @Override
+    public Department findByName(String name) {
+        Department dep;
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            conn.setAutoCommit(false);
+            st = conn.createStatement();
+            rs = st.executeQuery("Select * from department where name = " + name);
 
             if (rs.next()) {
                 return dep = new Department(rs.getInt("DepartmentId"),

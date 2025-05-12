@@ -54,7 +54,7 @@ public class MainViewController implements Initializable {
 
     }
 
-    private <T> void loadView(String view, Consumer<T> initParameter) {
+    public <T> void loadView(String view, Consumer<T> initParameter) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(view));
         try {
             VBox newVBox = loader.load();

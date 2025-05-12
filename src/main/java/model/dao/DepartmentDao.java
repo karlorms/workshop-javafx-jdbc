@@ -6,10 +6,11 @@ import java.util.List;
 
 public interface DepartmentDao {
 
-    void insert(Department department);
+    int insert(Department department);
     void update(Department department);
     void deleteById(Integer id);
     Department findById(Integer id);
+    Department findByName(String name);
 
     List<Department> findAll();
 }

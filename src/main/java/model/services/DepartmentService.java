@@ -13,4 +13,16 @@ public class DepartmentService {
     public List<Department> findAll() {
         return departmentDao.findAll();
     }
+
+    public int insertDepartment(Department department) {
+        return departmentDao.insert(department);
+    }
+
+    public Department findById(Integer id){
+        return departmentDao.findById(id);
+    }
+
+    public Department findByName(String name){
+        return departmentDao.findByName(name);
+    }
 }
