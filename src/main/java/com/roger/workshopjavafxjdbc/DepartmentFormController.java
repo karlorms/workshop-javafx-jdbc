@@ -13,12 +13,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Department;
+import model.exceptions.ValidationException;
 import model.services.DepartmentService;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DepartmentFormController implements Initializable {
 
@@ -43,7 +43,7 @@ public class DepartmentFormController implements Initializable {
     @FXML
     private Button btnCancel;
 
-    public void setDepartment(Department department){
+    public void setDepartment(Department department) {
         this.department = department;
     }
 
@@ -51,21 +51,37 @@ public class DepartmentFormController implements Initializable {
         dataChangeListeners.add(listener);
     }
 
+    public Department getFormData() {
+        Department obj = null;
+        ValidationException exception = new ValidationException("Validation error");
+        if (txtName.getText().trim().equals("") || txtName.getText() == null) {
+            exception.addError("name", "Field Name is empty");
+        } else {
+            obj = new Department(Utils.tryToParseToInt(lblId.getText()), txtName.getText());
+        }
+        if (exception.getErrors().size() > 0) {
+            throw exception;
+        }
+        return obj;
+    }
+
     @FXML
     public void onSaveAction(ActionEvent actionEvent) {
         try {
-            department = new Department(Utils.tryToParseToInt(lblId.getText()),
-                    txtName.getText());
+            department = getFormData();
             departmentService = new DepartmentService();
             lblId.setText(String.valueOf(departmentService.insertDepartment(department)));
             notifyDataChangeListeners();
-        } catch (DbException e){
-            Alerts.showAlert("Error", null, e.getMessage(), Alert.AlertType.ERROR);
+        } catch (ValidationException e) {
+            setErroMessages(e.getErrors());
+        } catch (DbException e1) {
+            Alerts.showAlert("Error saving data", null, e1.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
+
     private void notifyDataChangeListeners() {
-        for (DataChangeListener listener : dataChangeListeners){
+        for (DataChangeListener listener : dataChangeListeners) {
             listener.onDataChanged();
         }
     }
@@ -78,5 +94,13 @@ public class DepartmentFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Constraints.setTextFieldMaxLength(txtName, 30);
+    }
+
+    private void setErroMessages(Map<String, String> erros) {
+        Set<String> fields = erros.keySet();
+
+        if (fields.contains("name")) {
+            lblError.setText(erros.get("name"));
+        }
     }
 }
