@@ -54,7 +54,7 @@ public class DepartmentFormController implements Initializable {
     public Department getFormData() {
         Department obj = null;
         ValidationException exception = new ValidationException("Validation error");
-        if (txtName.getText().trim().equals("") || txtName.getText() == null) {
+        if (txtName.getText().trim().isEmpty() || txtName.getText() == null) {
             exception.addError("name", "Field Name is empty");
         } else {
             obj = new Department(Utils.tryToParseToInt(lblId.getText()), txtName.getText());
@@ -65,12 +65,21 @@ public class DepartmentFormController implements Initializable {
         return obj;
     }
 
+    private int saveOrUpdate(Department department){
+        if (lblId.getText() == null || lblId.getText().isEmpty()){
+            return departmentService.insertDepartment(department);
+        } else {
+            departmentService.updateDepartment(department);
+            return Integer.parseInt(lblId.getText());
+        }
+    }
+
     @FXML
     public void onSaveAction(ActionEvent actionEvent) {
         try {
             department = getFormData();
             departmentService = new DepartmentService();
-            lblId.setText(String.valueOf(departmentService.insertDepartment(department)));
+            lblId.setText(String.valueOf(saveOrUpdate(department)));
             notifyDataChangeListeners();
         } catch (ValidationException e) {
             setErroMessages(e.getErrors());
@@ -102,5 +111,10 @@ public class DepartmentFormController implements Initializable {
         if (fields.contains("name")) {
             lblError.setText(erros.get("name"));
         }
+    }
+
+    public void updateFormData() {
+        lblId.setText(String.valueOf(department.getId()));
+        txtName.setText(department.getName());
     }
 }

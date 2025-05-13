@@ -3,6 +3,7 @@ package com.roger.workshopjavafxjdbc;
 import com.roger.workshopjavafxjdbc.listeners.DataChangeListener;
 import com.roger.workshopjavafxjdbc.util.Alerts;
 import com.roger.workshopjavafxjdbc.util.Utils;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,17 +11,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -40,6 +41,9 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
     private TableColumn<Department, String> tableColumnName;
 
     @FXML
+    private TableColumn<Department, Department> tableColumnEdit;
+
+    @FXML
     private Button btNew;
 
     private ObservableList<Department> departmentObservableList;
@@ -51,7 +55,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
     @FXML
     public void onBtNewAction(ActionEvent actionEvent){
         Stage parentEstage = Utils.currentStage(actionEvent);
-        loadDialogForm( "DepartmentForm.fxml", parentEstage);
+        loadDialogForm(new Department(), "DepartmentForm.fxml", parentEstage);
     }
 
     @Override
@@ -74,16 +78,18 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         List<Department> list = departmentService.findAll();
         departmentObservableList = FXCollections.observableArrayList(list);
         departmentTableView.setItems(departmentObservableList);
+        initEditButtons();
     }
 
-    private void loadDialogForm(String view, Stage parentStage) {
+    private void loadDialogForm(Department obj, String view, Stage parentStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(view));
         try {
             Pane pane = loader.load();
 
             DepartmentFormController controller = loader.getController();
-            controller.setDepartment(new Department());
+            controller.setDepartment(obj);
             controller.subscribeDataChangeListener(this);
+            controller.updateFormData();
             Stage stage = new Stage();
             stage.setScene(new Scene(pane));
             stage.initOwner(parentStage);
@@ -94,6 +100,34 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         } catch (IOException e) {
             Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
         }
+    }
+
+    private void initEditButtons(){
+        tableColumnEdit.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnEdit.setCellFactory(param ->
+                new TableCell<Department, Department>(){
+
+            private final Button button = new Button();
+
+            @Override
+            protected void updateItem(Department obj, boolean empty) {
+                super.updateItem(obj, empty);
+
+                File img = new File("src/main/resources/logo/edit.png");
+                ImageView view = new ImageView(img.toURI().toString());
+                button.setGraphic(view);
+
+                if (obj == null) {
+                    setGraphic(button);
+                    return;
+                }
+
+                setGraphic(button);
+                button.setOnAction(event -> loadDialogForm(
+                        obj, "DepartmentForm.fxml", Utils.currentStage(event)));
+            }
+        });
     }
 
     @Override

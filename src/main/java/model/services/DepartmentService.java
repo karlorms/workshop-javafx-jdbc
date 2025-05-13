@@ -18,6 +18,10 @@ public class DepartmentService {
         return departmentDao.insert(department);
     }
 
+    public void updateDepartment(Department department){
+            departmentDao.update(department);
+    }
+
     public Department findById(Integer id){
         return departmentDao.findById(id);
     }
