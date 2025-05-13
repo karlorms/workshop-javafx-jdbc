@@ -119,7 +119,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
                 button.setGraphic(view);
 
                 if (obj == null) {
-                    setGraphic(button);
+                    //setGraphic(button);
                     return;
                 }
 
