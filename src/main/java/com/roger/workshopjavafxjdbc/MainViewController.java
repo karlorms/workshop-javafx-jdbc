@@ -1,6 +1,8 @@
 package com.roger.workshopjavafxjdbc;
 
 import com.roger.workshopjavafxjdbc.util.Alerts;
+import com.roger.workshopjavafxjdbc.util.Utils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.services.DepartmentService;
+import model.services.SellerService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -32,8 +35,11 @@ public class MainViewController implements Initializable {
 
     @FXML
     public void onMenuItemSellerAction() {
+        loadView("SellerListView.fxml", (SellerListViewController controller) -> {
+            controller.setSellerService(new SellerService());
+            controller.updateTableView();
+        });
 
-        System.out.println("Seller Action");
     }
 
     @FXML
@@ -85,8 +91,8 @@ public class MainViewController implements Initializable {
 
             Scene scene = new Scene(vBox);
             Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Workshop");
             stage.getScene().getWindow();
             stage.alwaysOnTopProperty();

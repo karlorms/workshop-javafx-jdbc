@@ -22,7 +22,7 @@ public class SellerDaoJDBC implements SellerDao {
     }
 
     @Override
-    public void insert(Seller seller) {
+    public int insert(Seller seller) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -41,7 +41,8 @@ public class SellerDaoJDBC implements SellerDao {
             rs = ps.getGeneratedKeys();
             if(rows > 0){
                 while (rs.next()){
-                    System.out.println("Rows affected: " + rows + " Id gerenated: " + rs.getInt(1));
+                    //System.out.println("Rows affected: " + rows + " Id gerenated: " + rs.getInt(1));
+                    return rs.getInt(1);
                 }
             } else {
                 throw new DbException("Unexpected error! No rows affected!");
@@ -60,7 +61,7 @@ public class SellerDaoJDBC implements SellerDao {
             DB.closePreparedStatement(ps);
             DB.closeResultset(rs);
         }
-
+        return 0;
     }
 
     @Override
@@ -253,5 +254,10 @@ public class SellerDaoJDBC implements SellerDao {
         }
 
         return seller;
+    }
+
+    @Override
+    public Seller findByName(String name) {
+        return null;
     }
 }
