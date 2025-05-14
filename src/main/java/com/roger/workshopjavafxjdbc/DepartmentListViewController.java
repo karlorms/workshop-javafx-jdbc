@@ -3,6 +3,7 @@ package com.roger.workshopjavafxjdbc;
 import com.roger.workshopjavafxjdbc.listeners.DataChangeListener;
 import com.roger.workshopjavafxjdbc.util.Alerts;
 import com.roger.workshopjavafxjdbc.util.Utils;
+import db.DbIntegrityException;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DepartmentListViewController implements Initializable, DataChangeListener {
@@ -42,6 +44,9 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
 
     @FXML
     private TableColumn<Department, Department> tableColumnEdit;
+
+    @FXML
+    private TableColumn<Department, Department> tableColumnRemove;
 
     @FXML
     private HBox hBoxTableColum;
@@ -82,6 +87,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         departmentObservableList = FXCollections.observableArrayList(list);
         departmentTableView.setItems(departmentObservableList);
         initEditButtons();
+        initRemoveButtons();
     }
 
     private void loadDialogForm(Department obj, String view, Stage parentStage) {
@@ -106,8 +112,19 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
     }
 
     private void deleteDepartment(Department obj) {
-        departmentService.deleteDepartment(obj);
-        updateTableView();
+        Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
+        if (result.get() == ButtonType.OK){
+            if (departmentService == null) {
+                throw new IllegalStateException("Service is null");
+            }
+            try {
+                departmentService.deleteDepartment(obj);
+                updateTableView();
+            } catch (DbIntegrityException e) {
+                Alerts.showAlert("Error removing object", null, e.getMessage(), Alert.AlertType.ERROR);
+            }
+
+        }
     }
 
     private void initEditButtons(){
@@ -117,7 +134,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
                 new TableCell<Department, Department>(){
 
             private final Button btnEdit = new Button();
-            private final Button btnRemove = new Button();
+
 
             @Override
             protected void updateItem(Department obj, boolean empty) {
@@ -127,21 +144,39 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
                 ImageView view = new ImageView(imgEdit.toURI().toString());
                 btnEdit.setGraphic(view);
 
+                if (obj == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                setGraphic(btnEdit);
+                btnEdit.setOnAction(event -> loadDialogForm(obj, "DepartmentForm.fxml", Utils.currentStage(event)));
+            }
+        });
+    }
+
+    private void initRemoveButtons(){
+        tableColumnRemove.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnRemove.setCellFactory(param ->
+                new TableCell<Department, Department>(){
+
+            private final Button btnRemove = new Button();
+
+            @Override
+            public void updateItem(Department obj, boolean empty){
+                super.updateItem(obj, empty);
+
                 File imgRemove = new File("src/main/resources/logo/remove-x.png");
                 ImageView viewRemove = new ImageView(imgRemove.toURI().toString());
                 btnRemove.setGraphic(viewRemove);
 
-                if (obj == null) {
-                    //setGraphic(button);
+                if (obj == null){
+                    setGraphic(null);
                     return;
                 }
 
-                hBoxTableColum = new HBox(5);
-                hBoxTableColum.getChildren().addAll(btnEdit, btnRemove);
-                setGraphic(hBoxTableColum);
-                //setGraphic(buttonEdit);
-                btnEdit.setOnAction(event -> loadDialogForm(obj, "DepartmentForm.fxml", Utils.currentStage(event)));
-                //setGraphic(buttonRemove);
+                setGraphic(btnRemove);
                 btnRemove.setOnAction(event -> deleteDepartment(obj));
             }
         });

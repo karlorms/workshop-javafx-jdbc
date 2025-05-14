@@ -32,13 +32,10 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             rs = ps.getGeneratedKeys();
             if(rows > 0){
                 while (rs.next()){
-                    System.out.println("Rows affected: " + rows + " Id gerenated: " + rs.getInt(1));
+                    //System.out.println("Rows affected: " + rows + " Id gerenated: " + rs.getInt(1));
                     return rs.getInt(1);
                 }
-            } else {
-                System.out.println("No rows affected!");
             }
-
             conn.commit();
         } catch (SQLException e) {
             try {
@@ -65,13 +62,13 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
             int rows  = ps.executeUpdate();
 
-            System.out.println("Rows affected: " + rows);
+            //System.out.println("Rows affected: " + rows);
 
             conn.commit();
         } catch (SQLException e) {
             try {
                 conn.rollback();
-                System.out.println("Rolled back! Caused by: " + e.getMessage());
+                throw new DbIntegrityException("Rolled back! Caused by: " + e.getMessage());
             } catch (SQLException e1) {
                 throw new DbIntegrityException("Cant rollback! Caused by: " + e1.getMessage());
             }
@@ -96,7 +93,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
         } catch (SQLException e) {
             try {
                 conn.rollback();
-                System.out.println("Rolled back! Caused by: " + e.getMessage());
+                throw new DbIntegrityException("Rolled back! Caused by: " + e.getMessage());
             } catch (SQLException e1) {
                 throw new DbIntegrityException("Cant rollback! Caused by: " + e1.getMessage());
             }
