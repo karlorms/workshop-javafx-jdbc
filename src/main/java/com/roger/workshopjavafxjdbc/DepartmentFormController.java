@@ -16,7 +16,6 @@ import model.entities.Department;
 import model.exceptions.ValidationException;
 import model.services.DepartmentService;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -52,12 +51,13 @@ public class DepartmentFormController implements Initializable {
     }
 
     public Department getFormData() {
-        Department obj = null;
+        Department obj = new Department();
+        obj.setId(Utils.tryToParseToInt(lblId.getText()));
         ValidationException exception = new ValidationException("Validation error");
         if (txtName.getText().trim().isEmpty() || txtName.getText() == null) {
             exception.addError("name", "Field Name is empty");
         } else {
-            obj = new Department(Utils.tryToParseToInt(lblId.getText()), txtName.getText());
+            obj.setName(txtName.getText());
         }
         if (exception.getErrors().size() > 0) {
             throw exception;
@@ -65,8 +65,8 @@ public class DepartmentFormController implements Initializable {
         return obj;
     }
 
-    private int saveOrUpdate(Department department){
-        if (lblId.getText() == null || lblId.getText().isEmpty()){
+    private int saveOrUpdate(Department department) {
+        if (lblId.getText() == null || lblId.getText().isEmpty()) {
             return departmentService.insertDepartment(department);
         } else {
             departmentService.updateDepartment(department);
@@ -114,7 +114,12 @@ public class DepartmentFormController implements Initializable {
     }
 
     public void updateFormData() {
-        lblId.setText(String.valueOf(department.getId()));
-        txtName.setText(department.getName());
+        if (department.getId() == null) {
+            lblId.setText("");
+        } else {
+            lblId.setText(String.valueOf(department.getId()));
+            txtName.setText(department.getName());
+        }
+
     }
 }

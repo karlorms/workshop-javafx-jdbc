@@ -13,8 +13,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -42,6 +42,9 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
 
     @FXML
     private TableColumn<Department, Department> tableColumnEdit;
+
+    @FXML
+    private HBox hBoxTableColum;
 
     @FXML
     private Button btNew;
@@ -102,30 +105,44 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         }
     }
 
+    private void deleteDepartment(Department obj) {
+        departmentService.deleteDepartment(obj);
+        updateTableView();
+    }
+
     private void initEditButtons(){
         tableColumnEdit.setCellValueFactory(param ->
                 new ReadOnlyObjectWrapper<>(param.getValue()));
         tableColumnEdit.setCellFactory(param ->
                 new TableCell<Department, Department>(){
 
-            private final Button button = new Button();
+            private final Button btnEdit = new Button();
+            private final Button btnRemove = new Button();
 
             @Override
             protected void updateItem(Department obj, boolean empty) {
                 super.updateItem(obj, empty);
 
-                File img = new File("src/main/resources/logo/edit.png");
-                ImageView view = new ImageView(img.toURI().toString());
-                button.setGraphic(view);
+                File imgEdit = new File("src/main/resources/logo/edit.png");
+                ImageView view = new ImageView(imgEdit.toURI().toString());
+                btnEdit.setGraphic(view);
+
+                File imgRemove = new File("src/main/resources/logo/remove-x.png");
+                ImageView viewRemove = new ImageView(imgRemove.toURI().toString());
+                btnRemove.setGraphic(viewRemove);
 
                 if (obj == null) {
                     //setGraphic(button);
                     return;
                 }
 
-                setGraphic(button);
-                button.setOnAction(event -> loadDialogForm(
-                        obj, "DepartmentForm.fxml", Utils.currentStage(event)));
+                hBoxTableColum = new HBox(5);
+                hBoxTableColum.getChildren().addAll(btnEdit, btnRemove);
+                setGraphic(hBoxTableColum);
+                //setGraphic(buttonEdit);
+                btnEdit.setOnAction(event -> loadDialogForm(obj, "DepartmentForm.fxml", Utils.currentStage(event)));
+                //setGraphic(buttonRemove);
+                btnRemove.setOnAction(event -> deleteDepartment(obj));
             }
         });
     }

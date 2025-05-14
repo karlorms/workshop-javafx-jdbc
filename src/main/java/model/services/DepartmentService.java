@@ -29,4 +29,8 @@ public class DepartmentService {
     public Department findByName(String name){
         return departmentDao.findByName(name);
     }
+
+    public void deleteDepartment(Department department){
+        departmentDao.deleteById(department.getId());
+    }
 }
