@@ -113,7 +113,7 @@ public class SellerListViewController implements Initializable, DataChangeListen
     }
 
     private void loadDialogForm(Seller obj, String view, Stage parentStage) {
-        /*FXMLLoader loader = new FXMLLoader(getClass().getResource(view));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(view));
         try {
             Pane pane = loader.load();
 
@@ -130,7 +130,7 @@ public class SellerListViewController implements Initializable, DataChangeListen
             stage.showAndWait();
         } catch (IOException e) {
             Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
-        }*/
+        }
     }
 
     private void deleteSeller(Seller obj) {
