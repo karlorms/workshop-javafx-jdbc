@@ -2,9 +2,12 @@ package com.roger.workshopjavafxjdbc;
 
 import com.roger.workshopjavafxjdbc.listeners.DataChangeListener;
 import com.roger.workshopjavafxjdbc.util.Alerts;
+import com.roger.workshopjavafxjdbc.util.Constraints;
 import com.roger.workshopjavafxjdbc.util.Utils;
 import db.DbIntegrityException;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,12 +22,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import model.entities.Seller;
 import model.services.SellerService;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -41,6 +49,15 @@ public class SellerListViewController implements Initializable, DataChangeListen
 
     @FXML
     private TableColumn<Seller, String> tableColumnName;
+
+    @FXML
+    private TableColumn<Seller, String> tableColumnEmail;
+
+    @FXML
+    private TableColumn<Seller, LocalDate> tableColumnBirthDate;
+
+    @FXML
+    private TableColumn<Seller, Double> tableColumnBaseSalary;
 
     @FXML
     private TableColumn<Seller, Seller> tableColumnEdit;
@@ -74,6 +91,11 @@ public class SellerListViewController implements Initializable, DataChangeListen
     public void initializeNodes() {
         tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         tableColumnName.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        tableColumnEmail.setCellValueFactory(new PropertyValueFactory<>("Email"));
+        tableColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("BirthDate"));
+        Utils.formatTableColumnDate(tableColumnBirthDate, "dd/MM/yyyy");
+        tableColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("BaseSalary"));
+        Utils.formatTableColumnDouble(tableColumnBaseSalary, 2);
 
         Stage stage = (Stage) HelloApplication.getHelloApplicationScene().getWindow();
         sellerTableView.prefHeightProperty().bind(stage.heightProperty());
