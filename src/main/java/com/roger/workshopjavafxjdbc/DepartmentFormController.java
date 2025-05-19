@@ -46,6 +46,10 @@ public class DepartmentFormController implements Initializable {
         this.department = department;
     }
 
+    public void setDepartmentService(DepartmentService departmentService) {
+        this.departmentService = departmentService;
+    }
+
     public void subscribeDataChangeListener(DataChangeListener listener) {
         dataChangeListeners.add(listener);
     }
@@ -76,9 +80,12 @@ public class DepartmentFormController implements Initializable {
 
     @FXML
     public void onSaveAction(ActionEvent actionEvent) {
+        if (departmentService == null) {
+            throw new IllegalStateException("DepartmentService is null");
+        }
         try {
+            lblError.setText("");
             department = getFormData();
-            departmentService = new DepartmentService();
             lblId.setText(String.valueOf(saveOrUpdate(department)));
             notifyDataChangeListeners();
         } catch (ValidationException e) {
@@ -114,6 +121,9 @@ public class DepartmentFormController implements Initializable {
     }
 
     public void updateFormData() {
+        if (departmentService == null) {
+            throw new IllegalStateException("DepartmentService is null");
+        }
         if (department.getId() == null) {
             lblId.setText("");
         } else {

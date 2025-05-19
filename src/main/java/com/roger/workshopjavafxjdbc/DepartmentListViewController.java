@@ -61,7 +61,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
     }
 
     @FXML
-    public void onBtNewAction(ActionEvent actionEvent){
+    public void onBtNewAction(ActionEvent actionEvent) {
         Stage parentEstage = Utils.currentStage(actionEvent);
         loadDialogForm(new Department(), "DepartmentForm.fxml", parentEstage);
     }
@@ -71,7 +71,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         initializeNodes();
     }
 
-    public void initializeNodes(){
+    public void initializeNodes() {
         tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         tableColumnName.setCellValueFactory(new PropertyValueFactory<>("Name"));
 
@@ -79,8 +79,8 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         departmentTableView.prefHeightProperty().bind(stage.heightProperty());
     }
 
-    public void updateTableView(){
-        if (departmentService == null){
+    public void updateTableView() {
+        if (departmentService == null) {
             throw new IllegalStateException("Service is null");
         }
         List<Department> list = departmentService.findAll();
@@ -97,6 +97,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
 
             DepartmentFormController controller = loader.getController();
             controller.setDepartment(obj);
+            controller.setDepartmentService(new DepartmentService());
             controller.subscribeDataChangeListener(this);
             controller.updateFormData();
             Stage stage = new Stage();
@@ -113,7 +114,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
 
     private void deleteDepartment(Department obj) {
         Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
-        if (result.get() == ButtonType.OK){
+        if (result.get() == ButtonType.OK) {
             if (departmentService == null) {
                 throw new IllegalStateException("Service is null");
             }
@@ -127,59 +128,59 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         }
     }
 
-    private void initEditButtons(){
+    private void initEditButtons() {
         tableColumnEdit.setCellValueFactory(param ->
                 new ReadOnlyObjectWrapper<>(param.getValue()));
         tableColumnEdit.setCellFactory(param ->
-                new TableCell<Department, Department>(){
+                new TableCell<Department, Department>() {
 
-            private final Button btnEdit = new Button();
+                    private final Button btnEdit = new Button();
 
 
-            @Override
-            protected void updateItem(Department obj, boolean empty) {
-                super.updateItem(obj, empty);
+                    @Override
+                    protected void updateItem(Department obj, boolean empty) {
+                        super.updateItem(obj, empty);
 
-                File imgEdit = new File("src/main/resources/logo/edit.png");
-                ImageView view = new ImageView(imgEdit.toURI().toString());
-                btnEdit.setGraphic(view);
+                        File imgEdit = new File("src/main/resources/logo/edit.png");
+                        ImageView view = new ImageView(imgEdit.toURI().toString());
+                        btnEdit.setGraphic(view);
 
-                if (obj == null) {
-                    setGraphic(null);
-                    return;
-                }
+                        if (obj == null) {
+                            setGraphic(null);
+                            return;
+                        }
 
-                setGraphic(btnEdit);
-                btnEdit.setOnAction(event -> loadDialogForm(obj, "DepartmentForm.fxml", Utils.currentStage(event)));
-            }
-        });
+                        setGraphic(btnEdit);
+                        btnEdit.setOnAction(event -> loadDialogForm(obj, "DepartmentForm.fxml", Utils.currentStage(event)));
+                    }
+                });
     }
 
-    private void initRemoveButtons(){
+    private void initRemoveButtons() {
         tableColumnRemove.setCellValueFactory(param ->
                 new ReadOnlyObjectWrapper<>(param.getValue()));
         tableColumnRemove.setCellFactory(param ->
-                new TableCell<Department, Department>(){
+                new TableCell<Department, Department>() {
 
-            private final Button btnRemove = new Button();
+                    private final Button btnRemove = new Button();
 
-            @Override
-            public void updateItem(Department obj, boolean empty){
-                super.updateItem(obj, empty);
+                    @Override
+                    public void updateItem(Department obj, boolean empty) {
+                        super.updateItem(obj, empty);
 
-                File imgRemove = new File("src/main/resources/logo/remove-x.png");
-                ImageView viewRemove = new ImageView(imgRemove.toURI().toString());
-                btnRemove.setGraphic(viewRemove);
+                        File imgRemove = new File("src/main/resources/logo/remove-x.png");
+                        ImageView viewRemove = new ImageView(imgRemove.toURI().toString());
+                        btnRemove.setGraphic(viewRemove);
 
-                if (obj == null){
-                    setGraphic(null);
-                    return;
-                }
+                        if (obj == null) {
+                            setGraphic(null);
+                            return;
+                        }
 
-                setGraphic(btnRemove);
-                btnRemove.setOnAction(event -> deleteDepartment(obj));
-            }
-        });
+                        setGraphic(btnRemove);
+                        btnRemove.setOnAction(event -> deleteDepartment(obj));
+                    }
+                });
     }
 
     @Override

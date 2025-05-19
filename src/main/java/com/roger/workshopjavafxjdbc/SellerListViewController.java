@@ -24,6 +24,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.entities.Seller;
+import model.services.DepartmentService;
 import model.services.SellerService;
 
 import java.io.File;
@@ -119,6 +120,8 @@ public class SellerListViewController implements Initializable, DataChangeListen
 
             SellerFormController controller = loader.getController();
             controller.setSeller(obj);
+            controller.setServices(new SellerService(), new DepartmentService());
+            controller.loadAssociatedObjects();
             controller.subscribeDataChangeListener(this);
             controller.updateFormData();
             Stage stage = new Stage();
