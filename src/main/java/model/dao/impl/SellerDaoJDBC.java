@@ -41,7 +41,6 @@ public class SellerDaoJDBC implements SellerDao {
             rs = ps.getGeneratedKeys();
             if(rows > 0){
                 while (rs.next()){
-                    //System.out.println("Rows affected: " + rows + " Id gerenated: " + rs.getInt(1));
                     return rs.getInt(1);
                 }
             } else {

@@ -175,11 +175,12 @@ public class SellerFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        //Constraints.setLabelFieldInteger(lblId);
         Constraints.setTextFieldMaxLength(txtName, 70);
         Constraints.setTextFieldMaxLength(txtEmail, 60);
         Constraints.setTextFieldDouble(txtBaseSalary);
         Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
+        //Constraints.maskDate(dpBirthDate);
+        Constraints.applyDateMask(dpBirthDate);
 
         initializeComboBoxDepartment();
     }
